@@ -1,4 +1,5 @@
 # this_file: tests/test_automation_cli.py
+import asyncio
 import dataclasses
 import json
 import runpy
@@ -208,6 +209,41 @@ def test_cli_startup_failure_reports_notes_without_execution(
         cli.main(["eval", "1", "--verbose"])
     assert caught.value is error
     assert capsys.readouterr().err == ""
+
+
+def test_cli_startup_timeout_reports_cancellation_notes_without_execution(
+    monkeypatch, tmp_path, capsys
+):
+    note = f"Setup outcome may be unknown; inspect {tmp_path / 'result.json'}"
+
+    async def expire():
+        async with asyncio.timeout(0):
+            try:
+                await asyncio.sleep(1)
+            except asyncio.CancelledError as error:
+                error.add_note(note)
+                raise
+
+    with pytest.raises(TimeoutError) as caught:
+        asyncio.run(expire())
+    assert not getattr(caught.value, "__notes__", ())
+    remote = SimpleNamespace(
+        FontLab=Mock(), ensure_ready=Mock(side_effect=caught.value)
+    )
+    discovery = SimpleNamespace(find_bridge=Mock(return_value="bridge.exe"))
+    monkeypatch.setitem(sys.modules, "fontlab_remopy", remote)
+    monkeypatch.setitem(sys.modules, "fontlab_remopy.discovery", discovery)
+    monkeypatch.setattr(
+        a, "ensure_installed", Mock(return_value=tmp_path / "FontLab.exe")
+    )
+
+    assert cli.main(["eval", "1"]) == 1
+
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert note in output.err
+    remote.ensure_ready.assert_called_once()
+    remote.FontLab.assert_not_called()
 
 
 @pytest.mark.parametrize("value", ["0", "-1", "nan", "inf"])

@@ -12,12 +12,14 @@ All four remote CLI routes reuse this shared entry point. A startup failure
 prevents client creation; no requested script or tool operation is replayed.
 Plain `launch` and `submit` retain their request-only contracts.
 
-`./test.sh -q`: 50 tests pass on Python 3.11.16, automation coverage 100%,
-combined coverage 95.00%, Ruff passes. Regressions cover startup ordering,
+`./test.sh -q`: 51 tests pass on Python 3.11.16, automation coverage 100%,
+combined coverage 95.02%, Ruff passes. Regressions cover startup ordering,
 selected macOS/Windows bridge paths, discovery fallback, missing bridge and
 readiness timeout. CLI routing checks assert a single connection and operation.
 Default CLI errors print exception notes, retaining the setup evidence path and
-uncertainty warning. Startup-failure regressions prove no client is constructed;
+uncertainty warning, including notes retained on an asyncio timeout's direct
+cancellation cause. A genuine asyncio-timeout regression covers that wrapping.
+Startup-failure regressions prove no client is constructed;
 verbose mode preserves the original exception.
 The dependency floor is Remopy 2.0.12, to be released before this consumer.
 

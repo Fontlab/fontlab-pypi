@@ -10,10 +10,11 @@ this_file: CHANGELOG.md
   the operation client. Readiness failures prevent user operations; user
   scripts and tool calls execute once.
 - Show setup exception notes in normal CLI errors so the retained evidence path
-  and uncertainty guidance remain visible; verbose mode still raises the error.
+  and uncertainty guidance remain visible, including notes on the direct
+  cancellation cause of an asyncio timeout; verbose mode still raises the error.
 - Require Remopy 2.0.12 or newer for its shared macOS/Windows readiness API.
-  Source verification: 50 tests pass, automation coverage 100%, combined
-  coverage 95.00%, Ruff passes. Native startup and installed release checks
+  Source verification: 51 tests pass, automation coverage 100%, combined
+  coverage 95.02%, Ruff passes. Native startup and installed release checks
   remain open in TODO.
 
 ## 1.0.0 — 2026-11-18
