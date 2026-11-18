@@ -31,8 +31,8 @@ pending publishers are bootstrapped one project at a time.
 Remaining native checks: verify elevated silent installation, launch and script
 submission on a real Windows host; verify MCP automation on a FontLab build with
 a working bridge, including cold start, delayed startup, disabled external MCP
-access and warning-dialog suppression. Release Remopy with the readiness API
-before publishing this package's updated dependency. These checks are separate
-from the completed 1.0.0 package delivery.
+access and warning-dialog suppression. These checks are separate from the
+completed 1.0.2 package delivery and installed SDK integration; those checks
+use fixture launch/submission boundaries and do not prove native readiness.
 Current appcast Sparkle signatures remain an explicitly documented verification
 limit; HTTPS, declared length and any supplied SHA-256 are checked.

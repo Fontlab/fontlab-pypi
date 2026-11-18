@@ -4,10 +4,10 @@ this_file: README.md
 # FontLab for external Python
 
 Install FontLab 9 and automate its desktop application from ordinary Python.
-Version 1.0.0 is published as [fontlab](https://pypi.org/project/fontlab/1.0.0/),
-[fontgate](https://pypi.org/project/fontgate/1.0.0/) and
-[fontpr](https://pypi.org/project/fontpr/1.0.0/); the
-[GitHub release](https://github.com/Fontlab/fontlab-pypi/releases/tag/v1.0.0)
+Version 1.0.2 is published as [fontlab](https://pypi.org/project/fontlab/1.0.2/),
+[fontgate](https://pypi.org/project/fontgate/1.0.2/) and
+[fontpr](https://pypi.org/project/fontpr/1.0.2/); the
+[GitHub release](https://github.com/Fontlab/fontlab-pypi/releases/tag/v1.0.2)
 contains all three wheels and source archives.
 
 ```bash

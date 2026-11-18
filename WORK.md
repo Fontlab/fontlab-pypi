@@ -3,6 +3,39 @@ this_file: WORK.md
 ---
 # Implementation verification
 
+## Issue 274 final package delivery — 2026-11-19
+
+All three packages are published as 1.0.2 from tag/source
+`3cb604419516ab068a92ebbf938a614e43f126b3`. The readiness provider is published
+as Remopy 2.0.12 from source `2ed7cd2`. Source CI
+[44419077223](https://github.com/Fontlab/fontlab-pypi/actions/runs/44419077223)
+and [44419082099](https://github.com/Fontlab/fontlab-pypi/actions/runs/44419082099)
+passed all six OS/Python combinations; the
+[OIDC upload](https://github.com/Fontlab/fontlab-pypi/actions/runs/44419239311)
+succeeded. Controller source checks pass 51 tests at 95.02% coverage plus Ruff.
+
+Independent released-artifact verification (`RELEASE-VERIFICATION.md`) passes
+a normal clean arm64 CPython 3.12 PyPI installation of all three 1.0.2 packages,
+resolving Remopy 2.0.12 without dependency bypasses or local overrides.
+`uv pip check` passes; installed versions and production payload bytes match
+the downloaded wheels, and both native-only stubs reject external import as
+documented. All eight published wheel/sdist downloads match their PyPI digests
+and GitHub release assets; the six consumer artifacts also match local builds.
+
+The installed four-route fixture uses actual MCP 2.3.0 framing, production
+relay subprocesses and readiness/connect/CLI code. After two offline catalogue
+errors, one nonce-confirmed setup submission precedes recovery. `tools`, `eval`,
+`run` and `call` succeed with no repeated user operation. Native launch and
+macro submission use fixture process boundaries and native-module stand-ins.
+This proves the installed provider/consumer boundary, not native host behavior.
+
+Native cold/delayed startup, disabled external access, warning suppression and
+real Windows launch/submission remain open in TODO. The native acceptance runner
+is unavailable, and the reported FontLab 9813 bridge crash was not exercised.
+No actual FontLab process or owner's installed environment was changed by these
+verification lanes. This delivery supersedes the earlier pending publication
+and clean-install checks below; the following sections are historical snapshots.
+
 ## Issue 274 readiness consumer — 2026-11-19
 
 `connect` resolves the installed application's native bridge and calls Remopy's

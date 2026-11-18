@@ -3,7 +3,7 @@ this_file: CHANGELOG.md
 ---
 # Changelog
 
-## Unreleased — Issue 274
+## 1.0.2 — 2026-11-19
 
 - Route `connect` and the CLI's `run`, `eval`, `tools` and `call` commands
   through Remopy's bounded native startup and MCP bootstrap before creating
@@ -14,8 +14,20 @@ this_file: CHANGELOG.md
   cancellation cause of an asyncio timeout; verbose mode still raises the error.
 - Require Remopy 2.0.12 or newer for its shared macOS/Windows readiness API.
   Source verification: 51 tests pass, automation coverage 100%, combined
-  coverage 95.02%, Ruff passes. Native startup and installed release checks
-  remain open in TODO.
+  coverage 95.02%, Ruff passes. Native startup checks remain open in TODO.
+- Published all three 1.0.2 packages from source
+  `3cb604419516ab068a92ebbf938a614e43f126b3` after Remopy 2.0.12 from
+  `2ed7cd2`. Source CI passed all six OS/Python combinations and the
+  [OIDC upload](https://github.com/Fontlab/fontlab-pypi/actions/runs/44419239311)
+  succeeded.
+- Verified a clean arm64 Python 3.12 PyPI installation with normal dependency
+  resolution to Remopy 2.0.12. All eight wheel/sdist downloads across the four
+  distributions match PyPI digests and GitHub release assets; the six consumer
+  artifacts also match the local builds.
+- Verified the installed `tools`, `eval`, `run` and `call` routes with real MCP
+  SDK framing and relay subprocesses: one confirmed setup submission, recovered
+  catalogue and no replayed user operations. Native launch/submission remained
+  fixture boundaries; real macOS/Windows acceptance remains open.
 
 ## 1.0.0 — 2026-11-18
 
