@@ -43,15 +43,15 @@ def submit_script(
 def connect(
     *, beta: bool = False, destination: str | Path | None = None, timeout: float = 30
 ) -> Any:
-    """Ensure installation, launch and return Remopy's synchronous context manager.
+    """Wait for native MCP readiness, then return Remopy's context manager.
 
     A timeout leaves execution outcome unknown; callers must inspect the host
     before repeating a mutating operation.
     """
-    from fontlab_remopy import FontLab
+    from fontlab_remopy import FontLab, ensure_ready
     from fontlab_remopy.discovery import find_bridge
 
-    app = launch(beta=beta, destination=destination)
+    app = ensure_installed(beta=beta, destination=destination)
     candidate = (
         app / "Contents/MacOS/fontlab-mcp"
         if sys.platform == "darwin"
@@ -68,4 +68,5 @@ def connect(
         raise FileNotFoundError(
             "FontLab installed, but no native MCP bridge was found; use submit_script"
         )
+    ensure_ready(app=app, command=str(command), timeout=timeout)
     return FontLab(command=str(command), timeout=timeout)

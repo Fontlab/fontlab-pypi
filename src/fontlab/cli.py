@@ -98,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.verbose:
             raise
         print(f"fontlab-cli: {type(error).__name__}: {error}", file=sys.stderr)
+        for note in getattr(error, "__notes__", ()):
+            print(note, file=sys.stderr)
         if isinstance(error, subprocess.CalledProcessError) and error.stderr:
             detail = error.stderr
             if isinstance(detail, bytes):

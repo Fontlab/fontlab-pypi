@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, call
 
 import pytest
 
@@ -52,18 +52,69 @@ def test_windows_launch_and_submission_use_argument_lists(monkeypatch, tmp_path)
         a.submit_script(tmp_path)
 
 
-def test_connect_uses_discovered_bridge_and_launches(monkeypatch, tmp_path):
+def test_connect_uses_discovered_bridge_after_readiness(monkeypatch, tmp_path):
     monkeypatch.setattr(a.sys, "platform", "win32")
-    monkeypatch.setattr(a, "launch", Mock(return_value=tmp_path / "FontLab 9.exe"))
-    remote = SimpleNamespace(FontLab=Mock())
+    app = tmp_path / "FontLab 9.exe"
+    monkeypatch.setattr(a, "ensure_installed", Mock(return_value=app))
+    remote = Mock()
     discovery = SimpleNamespace(find_bridge=Mock(return_value="bridge.exe"))
     monkeypatch.setitem(sys.modules, "fontlab_remopy", remote)
     monkeypatch.setitem(sys.modules, "fontlab_remopy.discovery", discovery)
     a.connect(timeout=4)
+    assert remote.method_calls == [
+        call.ensure_ready(app=app, command="bridge.exe", timeout=4),
+        call.FontLab(command="bridge.exe", timeout=4),
+    ]
     remote.FontLab.assert_called_once_with(command="bridge.exe", timeout=4)
+    remote.reset_mock()
     discovery.find_bridge.return_value = None
     with pytest.raises(FileNotFoundError, match="submit_script"):
         a.connect()
+    remote.ensure_ready.assert_not_called()
+    remote.FontLab.assert_not_called()
+
+
+@pytest.mark.parametrize("platform", ["darwin", "win32"])
+def test_connect_uses_selected_application_bridge(monkeypatch, tmp_path, platform):
+    app = tmp_path / ("FontLab 9.app" if platform == "darwin" else "FontLab 9.exe")
+    bridge = (
+        app / "Contents/MacOS/fontlab-mcp"
+        if platform == "darwin"
+        else app.parent / "fontlab-mcp.exe"
+    )
+    bridge.parent.mkdir(parents=True, exist_ok=True)
+    bridge.touch()
+    bridge.chmod(0o755)
+    monkeypatch.setattr(a.sys, "platform", platform)
+    monkeypatch.setattr(a, "ensure_installed", Mock(return_value=app))
+    remote = SimpleNamespace(FontLab=Mock(), ensure_ready=Mock())
+    discovery = SimpleNamespace(find_bridge=Mock())
+    monkeypatch.setitem(sys.modules, "fontlab_remopy", remote)
+    monkeypatch.setitem(sys.modules, "fontlab_remopy.discovery", discovery)
+
+    a.connect(beta=True, destination=app, timeout=7)
+
+    a.ensure_installed.assert_called_once_with(beta=True, destination=app)
+    discovery.find_bridge.assert_not_called()
+    remote.ensure_ready.assert_called_once_with(app=app, command=str(bridge), timeout=7)
+    remote.FontLab.assert_called_once_with(command=str(bridge), timeout=7)
+
+
+def test_connect_readiness_timeout_prevents_client_creation(monkeypatch, tmp_path):
+    app = tmp_path / "FontLab 9.exe"
+    monkeypatch.setattr(a, "ensure_installed", Mock(return_value=app))
+    remote = SimpleNamespace(
+        FontLab=Mock(), ensure_ready=Mock(side_effect=TimeoutError("startup timed out"))
+    )
+    discovery = SimpleNamespace(find_bridge=Mock(return_value="bridge.exe"))
+    monkeypatch.setitem(sys.modules, "fontlab_remopy", remote)
+    monkeypatch.setitem(sys.modules, "fontlab_remopy.discovery", discovery)
+
+    with pytest.raises(TimeoutError, match="startup timed out"):
+        a.connect(timeout=1)
+
+    remote.ensure_ready.assert_called_once_with(app=app, command="bridge.exe", timeout=1)
+    remote.FontLab.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -103,6 +154,14 @@ def test_cli_routes_operations(monkeypatch, tmp_path, capsys, operation):
         client.tool.assert_called_once_with("x", foo=2)
     if operation == "run":
         client.execute_script.assert_called_once_with(source)
+    if operation == "eval":
+        client.eval.assert_called_once_with("1")
+    if operation == "tools":
+        client.tools.assert_called_once_with()
+    if operation in {"run", "eval", "tools", "call"}:
+        cli.automation.connect.assert_called_once_with(
+            beta=True, destination=tmp_path, timeout=30
+        )
 
 
 def test_cli_validates_before_connect(monkeypatch, tmp_path, capsys):
@@ -122,6 +181,33 @@ def test_cli_failure_and_verbose(monkeypatch, capsys):
     assert "unknown" in capsys.readouterr().err
     with pytest.raises(TimeoutError):
         cli.main(["install", "--verbose"])
+
+
+@pytest.mark.parametrize("error_type", [TimeoutError, RuntimeError])
+def test_cli_startup_failure_reports_notes_without_execution(
+    monkeypatch, tmp_path, capsys, error_type
+):
+    error = error_type("startup failed")
+    note = f"Setup outcome may be unknown; inspect {tmp_path / 'result.json'}"
+    error.add_note(note)
+    remote = SimpleNamespace(FontLab=Mock(), ensure_ready=Mock(side_effect=error))
+    discovery = SimpleNamespace(find_bridge=Mock(return_value="bridge.exe"))
+    monkeypatch.setitem(sys.modules, "fontlab_remopy", remote)
+    monkeypatch.setitem(sys.modules, "fontlab_remopy.discovery", discovery)
+    monkeypatch.setattr(a, "ensure_installed", Mock(return_value=tmp_path / "FontLab.exe"))
+
+    assert cli.main(["eval", "1"]) == 1
+
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert "startup failed" in output.err
+    assert note in output.err
+    remote.ensure_ready.assert_called_once()
+    remote.FontLab.assert_not_called()
+    with pytest.raises(error_type) as caught:
+        cli.main(["eval", "1", "--verbose"])
+    assert caught.value is error
+    assert capsys.readouterr().err == ""
 
 
 @pytest.mark.parametrize("value", ["0", "-1", "nan", "inf"])

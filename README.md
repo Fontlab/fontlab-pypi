@@ -56,11 +56,20 @@ with fontlab.connect(timeout=30) as app:
 
 Automation uses [fontlab-remopy](https://github.com/fontlabcom/fontlab-remopy),
 including its authenticated MCP transport and execution result handling.
+`connect`, `run`, `eval`, `tools` and `call` wait for FontLab's native MCP
+catalogue before sending the requested operation. If needed, Remopy submits one
+setup macro to enable external MCP access and hide warning dialogs, confirms
+its execution, then waits for MCP readiness. `--timeout` bounds startup readiness
+(30 seconds by default) and applies separately to each subsequent remote call.
+Only readiness checks repeat; scripts and tool calls are never retried.
+The setup macro changes the MCP and warning preferences persistently. A modal
+startup dialog shown before FontLab accepts scripts still needs dismissal;
+the macro cannot run until then.
 `run` returns JSON with `value`, `stdout` and `stderr`; remote scripts assign
 `result` for a return value. `submit` hands a `.vfpy` file to FontLab and does
-not claim execution finished. On Windows file submission uses FontLab's executable;
-Remopy's own native application launcher supports macOS only. A native MCP bridge
-must be present for `run`, `eval`, `tools` and `call`; otherwise use `submit`.
+not claim execution finished. On Windows file submission uses FontLab's executable.
+A native MCP bridge must be present for `run`, `eval`, `tools` and `call`;
+otherwise use `submit`.
 Timeouts can mean an operation executed without a response: inspect the host
 before repeating a mutating command. FontLab 9.1.9813 has a reported native bridge
 crash; use script submission on affected builds rather than MCP commands.

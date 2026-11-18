@@ -14,8 +14,10 @@ compatible full installer, downloads over HTTPS with a timeout and length/hash
 checks, then installs. macOS uses hdiutil and ditto in a user destination; Windows uses Inno
 Setup's unattended switches from an elevated terminal (the installer requires admin). Existing applications are preserved. Installation
 is explicit through `install`, or automatic before launch/submit/remote calls.
-Remopy owns MCP transport and result handling. Windows launch/script submission
-use the installed executable because Remopy's native launch supports macOS only.
+Remopy owns MCP transport, startup readiness and result handling. Windows
+launch/script submission use the installed executable. Remote commands use
+Remopy's shared macOS/Windows launch and once-only MCP bootstrap before opening
+the operation's client context.
 
 The implementation affects package exports, CLI arguments, installer tests,
 standalone stub tests, three wheel/sdist configurations, build/publish scripts,
@@ -28,6 +30,9 @@ pending publishers are bootstrapped one project at a time.
 
 Remaining native checks: verify elevated silent installation, launch and script
 submission on a real Windows host; verify MCP automation on a FontLab build with
-a working bridge. These checks are separate from the completed package delivery.
+a working bridge, including cold start, delayed startup, disabled external MCP
+access and warning-dialog suppression. Release Remopy with the readiness API
+before publishing this package's updated dependency. These checks are separate
+from the completed 1.0.0 package delivery.
 Current appcast Sparkle signatures remain an explicitly documented verification
 limit; HTTPS, declared length and any supplied SHA-256 are checked.

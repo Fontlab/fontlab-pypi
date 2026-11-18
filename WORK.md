@@ -3,6 +3,29 @@ this_file: WORK.md
 ---
 # Implementation verification
 
+## Issue 274 readiness consumer — 2026-11-19
+
+`connect` resolves the installed application's native bridge and calls Remopy's
+`ensure_ready` before creating a client. Remopy owns launching, bounded catalogue
+polling and the once-only setup macro for MCP access and warning suppression.
+All four remote CLI routes reuse this shared entry point. A startup failure
+prevents client creation; no requested script or tool operation is replayed.
+Plain `launch` and `submit` retain their request-only contracts.
+
+`./test.sh -q`: 50 tests pass on Python 3.11.16, automation coverage 100%,
+combined coverage 95.00%, Ruff passes. Regressions cover startup ordering,
+selected macOS/Windows bridge paths, discovery fallback, missing bridge and
+readiness timeout. CLI routing checks assert a single connection and operation.
+Default CLI errors print exception notes, retaining the setup evidence path and
+uncertainty warning. Startup-failure regressions prove no client is constructed;
+verbose mode preserves the original exception.
+The dependency floor is Remopy 2.0.12, to be released before this consumer.
+
+These are source/mock checks. Native cold/delayed startup, disabled external MCP,
+warning suppression, real Windows behavior and a clean installed CLI remain
+open. No native application, owner environment, commit, push, tag or publication
+was changed by this consumer pass.
+
 The implementation and review sections below are historical snapshots. The
 final 1.0.0 delivery section records the completed release and current limits.
 

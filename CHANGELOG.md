@@ -3,6 +3,19 @@ this_file: CHANGELOG.md
 ---
 # Changelog
 
+## Unreleased — Issue 274
+
+- Route `connect` and the CLI's `run`, `eval`, `tools` and `call` commands
+  through Remopy's bounded native startup and MCP bootstrap before creating
+  the operation client. Readiness failures prevent user operations; user
+  scripts and tool calls execute once.
+- Show setup exception notes in normal CLI errors so the retained evidence path
+  and uncertainty guidance remain visible; verbose mode still raises the error.
+- Require Remopy 2.0.12 or newer for its shared macOS/Windows readiness API.
+  Source verification: 50 tests pass, automation coverage 100%, combined
+  coverage 95.00%, Ruff passes. Native startup and installed release checks
+  remain open in TODO.
+
 ## 1.0.0 — 2026-11-18
 
 - Implemented external `fontlab` API and `fontlab-cli` installation, launch,
