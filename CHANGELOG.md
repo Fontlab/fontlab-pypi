@@ -3,7 +3,7 @@ this_file: CHANGELOG.md
 ---
 # Changelog
 
-## Unreleased
+## 1.0.0 — 2026-11-18
 
 - Implemented external `fontlab` API and `fontlab-cli` installation, launch,
   script submission and Remopy remote operations.
@@ -19,3 +19,8 @@ this_file: CHANGELOG.md
   semantics and exposed captured subprocess errors; 45 tests and Ruff pass.
 - Verified the four live feeds and a real macOS installer download, followed by
   isolated copy/detach/reuse; the running application was preserved.
+
+- Published all three 1.0.0 distributions to PyPI and created the GitHub release;
+  all six published artifact hashes match the reviewed builds.
+- Passed source CI on Windows, macOS and Linux with Python 3.11 and 3.13;
+  rebuilt all three source archives and verified clean arm64 wheel/PyPI installs.

@@ -26,8 +26,8 @@ semver bumping, commit/push and three-package builds. `publish.sh` then sends th
 tagged artifacts through the existing multi-package OIDC upload helper. Initial
 pending publishers are bootstrapped one project at a time.
 
-Remaining work: independently review the release-helper addition; reconcile,
-commit and push the reviewed tree; publish the first 1.0.0 package releases;
-verify exact-SHA CI and clean PyPI installs. Windows elevated silent installation
-and script execution, and native MCP on a build with a working bridge, remain
-separate native checks.
+Remaining native checks: verify elevated silent installation, launch and script
+submission on a real Windows host; verify MCP automation on a FontLab build with
+a working bridge. These checks are separate from the completed package delivery.
+Current appcast Sparkle signatures remain an explicitly documented verification
+limit; HTTPS, declared length and any supplied SHA-256 are checked.

@@ -3,7 +3,12 @@ this_file: README.md
 ---
 # FontLab for external Python
 
-Install FontLab 9 and automate its desktop application from ordinary Python:
+Install FontLab 9 and automate its desktop application from ordinary Python.
+Version 1.0.0 is published as [fontlab](https://pypi.org/project/fontlab/1.0.0/),
+[fontgate](https://pypi.org/project/fontgate/1.0.0/) and
+[fontpr](https://pypi.org/project/fontpr/1.0.0/); the
+[GitHub release](https://github.com/Fontlab/fontlab-pypi/releases/tag/v1.0.0)
+contains all three wheels and source archives.
 
 ```bash
 uv pip install fontlab
@@ -85,15 +90,13 @@ from a reviewed release checkout. `publish.sh` runs this release step first.
 
 All three packages use the same repository tags through hatch-vcs. Build artifacts
 are collected in `dist/vMAJOR.MINOR.PATCH` (`dist/dev` for development). Publishing uses the multi-package upload helper generated
-by [pypitrust](https://github.com/twardoch/pypitrust). Register a trusted publisher
-for **each** of `fontlab`, `fontgate`, `fontpr`, using repository
-`Fontlab/fontlab-pypi`, workflow `pypi-upload.yml`, environment `pypi`.
-For the first publication, PyPI may reject simultaneous pending publishers with
-identical repository/workflow/environment tuples. Register `fontlab`, run
-`./release.sh` to build all three, then upload only its wheel and sdist with
-`scripts/pypi-upload.sh dist/vX.Y.Z/fontlab-*.whl dist/vX.Y.Z/fontlab-*.tar.gz`.
-After that project exists, register and upload `fontgate`, then `fontpr` the same
-way. Once all three projects exist, `./publish.sh` publishes them together.
+by [pypitrust](https://github.com/twardoch/pypitrust). All three projects now
+have Trusted Publishers for repository `Fontlab/fontlab-pypi`, workflow
+`pypi-upload.yml`, environment `pypi`; `./publish.sh` publishes them together.
+The initial release registered and uploaded `fontlab`, then `fontgate`, then
+`fontpr`, because PyPI rejects simultaneous pending publishers with identical
+repository/workflow/environment tuples. Each upload converted its pending
+publisher before the next registration.
 The helper retains failed staging drafts for retry. No PyPI API token is required.
 
 Actual desktop installation, host automation and PyPI publication are separate
