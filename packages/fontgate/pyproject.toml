@@ -1,0 +1,22 @@
+# this_file: packages/fontgate/pyproject.toml
+[build-system]
+requires = ["hatchling>=1.27", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+[project]
+name = "fontgate"
+dynamic = ["version"]
+description = "Explanatory stub for FontLab's native fontgate module"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+[project.urls]
+Repository = "https://github.com/Fontlab/fontlab-pypi"
+[tool.hatch.version]
+source = "vcs"
+[tool.hatch.version.raw-options]
+root = "../.."
+[tool.hatch.build.targets.wheel]
+packages = ["src/fontgate"]
+[tool.hatch.build.targets.sdist]
+include = ["src", "pyproject.toml", "README.md", "LICENSE"]
