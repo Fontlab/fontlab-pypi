@@ -11,7 +11,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-dependencies = ["fontlab-remopy>=2.0.12"]
+dependencies = ["fontlab-remopy>=2.0.13"]
 
 [project.urls]
 Repository = "https://github.com/Fontlab/fontlab-pypi"

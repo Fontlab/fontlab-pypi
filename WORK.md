@@ -3,6 +3,21 @@ this_file: WORK.md
 ---
 # Implementation verification
 
+## Issue 274 script-first setup — 2026-11-19
+
+The consumer requires Remopy 2.0.13 for script-first startup: public
+`ensure_ready` calls public `setup_mcp`, opening FontLab with its special `.vfpy`
+before any MCP readiness probe. The existing consumer connection hook and
+execution paths are unchanged. Current README documents the public helper and
+the intended `generalHideWarningDialogs=True` setting alongside MCP enabled.
+
+The retained native `preferences-hidden-result.json` records successful macro
+execution and `generalHideWarningDialogs: true`. This is preference-macro proof;
+it does not establish cold-start or full native MCP behavior.
+
+`./test.sh -q`: 51 tests pass at 95.02% coverage; Ruff and diff checks pass.
+No runtime source or owner environment changed in this consumer pass.
+
 ## Issue 274 final package delivery — 2026-11-19
 
 All three packages are published as 1.0.2 from tag/source

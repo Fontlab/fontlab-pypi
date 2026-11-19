@@ -57,14 +57,25 @@ with fontlab.connect(timeout=30) as app:
 Automation uses [fontlab-remopy](https://github.com/fontlabcom/fontlab-remopy),
 including its authenticated MCP transport and execution result handling.
 `connect`, `run`, `eval`, `tools` and `call` wait for FontLab's native MCP
-catalogue before sending the requested operation. If needed, Remopy submits one
-setup macro to enable external MCP access and hide warning dialogs, confirms
-its execution, then waits for MCP readiness. `--timeout` bounds startup readiness
+catalogue before sending the requested operation. Remopy first opens FontLab
+with one special `.vfpy` setup macro that enables external MCP access and sets
+`generalHideWarningDialogs=True`. It confirms macro execution, then waits for
+MCP readiness. `--timeout` bounds startup readiness
 (30 seconds by default) and applies separately to each subsequent remote call.
 Only readiness checks repeat; scripts and tool calls are never retried.
 The setup macro changes the MCP and warning preferences persistently. A modal
 startup dialog shown before FontLab accepts scripts still needs dismissal;
 the macro cannot run until then.
+
+The same bootstrap is available through Remopy's public synchronous helper,
+which calls its public `setup_mcp` operation before any readiness probe:
+
+```python
+from fontlab_remopy import ensure_ready
+
+ensure_ready(timeout=30)
+```
+
 `run` returns JSON with `value`, `stdout` and `stderr`; remote scripts assign
 `result` for a return value. `submit` hands a `.vfpy` file to FontLab and does
 not claim execution finished. On Windows file submission uses FontLab's executable.
