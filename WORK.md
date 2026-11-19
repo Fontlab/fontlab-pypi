@@ -18,6 +18,18 @@ it does not establish cold-start or full native MCP behavior.
 `./test.sh -q`: 51 tests pass at 95.02% coverage; Ruff and diff checks pass.
 No runtime source or owner environment changed in this consumer pass.
 
+All three consumer packages are published as 1.0.3 from tag/source
+`241fa3d3220bd0c459e06f616ef307a08175333b`, following Remopy 2.0.13 from
+`b586457`. Source CI
+[44429817434](https://github.com/Fontlab/fontlab-pypi/actions/runs/44429817434)
+and [44429817880](https://github.com/Fontlab/fontlab-pypi/actions/runs/44429817880)
+passed; [consumer upload](https://github.com/Fontlab/fontlab-pypi/actions/runs/44430211255)
+and [provider release](https://github.com/fontlabcom/fontlab-remopy/actions/runs/44429937102)
+succeeded. Controller verification matched all eight GitHub/PyPI artifact hashes.
+The native `script-first-cli-result.json` records confirmed bootstrap execution
+before a catalogue timeout (`cli_exit_code: 1`); it does not establish a
+successful native `tools` command.
+
 ## Issue 274 final package delivery — 2026-11-19
 
 All three packages are published as 1.0.2 from tag/source

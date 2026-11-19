@@ -3,12 +3,18 @@ this_file: CHANGELOG.md
 ---
 # Changelog
 
-## Unreleased — Issue 274 script-first setup
+## 1.0.3 — 2026-11-19
 
 - Require Remopy 2.0.13 so startup opens FontLab with the special setup `.vfpy`
   before any MCP readiness probe. Its public `ensure_ready` helper calls public
   `setup_mcp`; the existing CLI connection hook is unchanged. The macro enables
   MCP and hides warning dialogs (`generalHideWarningDialogs=True`).
+- Published all three 1.0.3 packages from source
+  `241fa3d3220bd0c459e06f616ef307a08175333b` after Remopy 2.0.13 (`b586457`);
+  source CI and OIDC upload passed. All eight wheel/sdist hashes across the
+  four packages match their downloaded GitHub and PyPI artifacts.
+- Native CLI verification confirmed the setup macro executed before the
+  catalogue timeout. The native `tools` command did not complete successfully.
 
 ## 1.0.2 — 2026-11-19
 
